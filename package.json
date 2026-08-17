@@ -1,0 +1,49 @@
+{
+  "name": "koda-code-cli",
+  "version": "0.1.0",
+  "description": "A clean-room terminal coding agent scaffold",
+  "keywords": ["ai", "cli", "coding-agent", "terminal", "typescript", "ink", "genapi"],
+  "author": "Lafmine",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lafmine/kodacli.git"
+  },
+  "homepage": "https://github.com/Lafmine/kodacli#readme",
+  "bugs": {
+    "url": "https://github.com/Lafmine/kodacli/issues"
+  },
+  "type": "module",
+  "bin": {
+    "koda": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.tsx",
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "commander": "^14.0.1",
+    "ink": "^6.3.1",
+    "react": "^19.1.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.12",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "license": "MIT"
+}

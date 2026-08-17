@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+.koda.json
+.env
+.env.*
+!.env.example
+*.log
