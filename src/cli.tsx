@@ -13,6 +13,7 @@ import {createProvider} from './providers/index.js';
 import {appendMessage, createSession, SessionStore} from './sessions.js';
 import {builtInTools} from './tools/index.js';
 import {App} from './ui/App.js';
+import {loadPrivateSystemPrompt} from './system-prompt.js';
 
 const VERSION = '0.1.0';
 
@@ -35,7 +36,7 @@ async function resolveSession(options: CliOptions, workspace: string, config: Ko
   return selected ?? createSession(workspace, config.provider, config.model);
 }
 
-async function runPrint(prompt: string, options: CliOptions, workspace: string, config: KodaConfig): Promise<void> {
+async function runPrint(prompt: string, options: CliOptions, workspace: string, config: KodaConfig, systemPrompt?: string): Promise<void> {
   const store = new SessionStore();
   const session = appendMessage(await resolveSession(options, workspace, config, store), {role: 'user', content: prompt});
   const provider = createProvider(config);
@@ -52,6 +53,7 @@ async function runPrint(prompt: string, options: CliOptions, workspace: string, 
       permissionMode: config.permissionMode,
       authorize: async () => false,
       signal: controller.signal,
+      systemPrompt,
     })) {
       if (event.type === 'text') process.stdout.write(event.text ?? '');
       else if (event.type === 'tool_start') process.stderr.write(`\n[${event.toolName}]\n`);
@@ -93,17 +95,18 @@ async function main(): Promise<void> {
   if (!(await stat(workspace)).isDirectory()) throw new Error(`Not a directory: ${workspace}`);
   loadWorkspaceEnvironment(workspace);
   const config = await loadConfig(workspace, options.permissionMode ? {permissionMode: options.permissionMode} : {});
+  const systemPrompt = await loadPrivateSystemPrompt(workspace);
 
   if (options.print) {
     if (!prompt) throw new Error('--print requires a prompt.');
-    await runPrint(prompt, options, workspace, config);
+    await runPrint(prompt, options, workspace, config, systemPrompt);
     return;
   }
 
   const store = new SessionStore();
   const [session, branch] = await Promise.all([resolveSession(options, workspace, config, store), getGitBranch(workspace)]);
   const provider = createProvider(config);
-  const instance = render(<App workspace={workspace} branch={branch} config={config} provider={provider} tools={builtInTools} session={session} store={store} initialPrompt={prompt || undefined} />);
+  const instance = render(<App workspace={workspace} branch={branch} config={config} provider={provider} tools={builtInTools} session={session} store={store} systemPrompt={systemPrompt} initialPrompt={prompt || undefined} />);
   await instance.waitUntilExit();
 }
 

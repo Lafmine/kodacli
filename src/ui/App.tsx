@@ -33,6 +33,7 @@ export interface AppProps {
   session: Session;
   store: SessionStore;
   initialPrompt?: string | undefined;
+  systemPrompt?: string | undefined;
 }
 
 export const slashCommands: SlashCommand[] = [
@@ -114,8 +115,8 @@ export function App(props: AppProps) {
     const [name, argument] = command.slice(1).trim().split(/\s+/, 2);
     if (name === 'help') addEntry('system', HELP);
     else if (name === 'clear') setTranscript([]);
-    else if (name === 'status') addEntry('system', `Session: ${session.id}\nProvider: ${config.provider}/${config.model}\nWorkspace: ${props.workspace}\nPermission mode: ${config.permissionMode}`);
-    else if (name === 'config') addEntry('system', JSON.stringify(config, null, 2));
+    else if (name === 'status') addEntry('system', `Session: ${session.id}\nWorkspace: ${props.workspace}\nPermission mode: ${config.permissionMode}`);
+    else if (name === 'config') addEntry('system', JSON.stringify({permissionMode: config.permissionMode, theme: config.theme, commandTimeoutMs: config.commandTimeoutMs}, null, 2));
     else if (name === 'permissions') {
       const requested = modes.includes(argument as PermissionMode) ? argument as PermissionMode : modes[(modes.indexOf(config.permissionMode) + 1) % modes.length] ?? 'default';
       setConfig((current) => withPermissionMode(current, requested));
@@ -161,6 +162,7 @@ export function App(props: AppProps) {
         permissionMode: config.permissionMode,
         authorize: (tool, toolInput) => new Promise<boolean>((resolve) => setApproval({tool, input: toolInput, resolve})),
         signal: abortController.signal,
+        systemPrompt: props.systemPrompt,
       });
       for await (const event of events) {
         if (event.type === 'text' && event.text) appendAssistant(event.text);
@@ -175,7 +177,7 @@ export function App(props: AppProps) {
       controller.current = undefined;
       setBusy(false);
     }
-  }, [addEntry, appendAssistant, busy, config, handleCommand, props.provider, props.store, props.tools, props.workspace, session]);
+  }, [addEntry, appendAssistant, busy, config, handleCommand, props.provider, props.store, props.systemPrompt, props.tools, props.workspace, session]);
 
   useEffect(() => {
     if (!initialSubmitted.current && props.initialPrompt) {

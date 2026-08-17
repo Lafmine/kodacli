@@ -20,6 +20,7 @@ export interface ChatRequest {
   workspace: string;
   model: string;
   tools: ProviderTool[];
+  systemPrompt?: string | undefined;
 }
 
 export type ProviderEvent =

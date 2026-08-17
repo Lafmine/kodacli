@@ -14,6 +14,7 @@ export interface AgentRunOptions {
   authorize: AuthorizeTool;
   signal: AbortSignal;
   maxTurns?: number;
+  systemPrompt?: string | undefined;
 }
 
 export async function* runAgent(options: AgentRunOptions): AsyncIterable<AgentEvent> {
@@ -30,6 +31,7 @@ export async function* runAgent(options: AgentRunOptions): AsyncIterable<AgentEv
         workspace: options.context.workspace,
         model: options.model,
         tools: providerTools(options.tools),
+        systemPrompt: options.systemPrompt,
       }, options.signal);
 
       for await (const event of events) {

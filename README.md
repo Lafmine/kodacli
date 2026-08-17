@@ -13,7 +13,7 @@
 
 </div>
 
-Koda Code is a clean-room terminal coding agent with an interactive TUI, streaming responses, local development tools, permission controls, persistent sessions, and an extensible provider API. It works offline in demo mode and supports GPT-4o mini through GenAPI.
+Koda Code is a clean-room terminal coding agent with an interactive TUI, streaming responses, local development tools, permission controls, persistent sessions, and an extensible provider API. It works offline in demo mode and supports live models through GenAPI.
 
 ```text
  ╭──────────────────────────────────────────────────────────────╮
@@ -80,12 +80,14 @@ Koda launches immediately without a key using its local demo provider. To enable
 KODA_API_KEY=your-genapi-key
 ```
 
-Run the same one-line command again. Koda automatically selects GenAPI and `gpt-4o-mini`. Optional overrides:
+Run the same one-line command again. Koda automatically selects the configured GenAPI model. Optional overrides:
 
 ```dotenv
-KODA_MODEL=gpt-4o-mini
+KODA_MODEL=your-model-id
 KODA_BASE_URL=https://proxy.gen-api.ru/v1
 ```
+
+Private local model instructions can be stored in `sysprm.txt` (or the legacy `systempromt.txt`) in the active workspace. Koda loads the file as the system prompt at runtime; both filenames are ignored by Git and never included in the package.
 
 ## Permission modes
 
