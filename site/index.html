@@ -310,7 +310,7 @@
         <a href="#install" class="btn btn-primary">Установить koda</a>
         <a href="#features" class="btn btn-ghost">Как это работает</a>
       </div>
-      <div class="hero-note"><span class="dot"></span> Windows 10/11 · PowerShell · Node.js 20+</div>
+      <div class="hero-note"><span class="dot"></span> Windows 10/11 · PowerShell · одна команда</div>
     </div>
 
     <div class="terminal reveal" id="termBox">
@@ -369,7 +369,7 @@
       <div class="section-head reveal">
         <div class="prompt">install</div>
         <h2>Установка за один шаг</h2>
-        <p>Открой PowerShell в папке проекта и выполни одну команду.</p>
+        <p>Открой PowerShell и выполни одну команду. Установщик сам проверит зависимости и добавит Koda в PATH.</p>
       </div>
 
       <div class="install-panel reveal">
@@ -378,11 +378,11 @@
         </div>
         <div class="install-body">
           <div class="cmd-row active">
-            <code>npx <span class="flag2">--yes</span> github:Lafmine/kodacli</code>
-            <button class="copy-btn" data-copy="npx --yes github:Lafmine/kodacli">Копировать</button>
+            <code>irm https://koda-cli.vercel.app/install.ps1 | iex</code>
+            <button class="copy-btn" data-copy="irm https://koda-cli.vercel.app/install.ps1 | iex">Копировать</button>
           </div>
           <div class="install-alt">
-            постоянная установка: <button data-copy="npm install -g github:Lafmine/kodacli">npm install -g github:Lafmine/kodacli</button>, затем команда <button data-copy="koda">koda</button>
+            после установки открой папку проекта и запусти <button data-copy="koda">koda</button>
           </div>
         </div>
       </div>
@@ -410,7 +410,7 @@
         </div>
         <div class="feature">
           <h3>Что нужно для запуска?</h3>
-          <p>Windows 10 или 11, PowerShell, Git и Node.js версии 20 или новее.</p>
+          <p>Только Windows 10 или 11 и PowerShell. Установщик сам добавит Git и Node.js через winget, если их ещё нет.</p>
         </div>
       </div>
     </div>

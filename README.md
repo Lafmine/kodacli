@@ -29,20 +29,15 @@ Koda Code is a clean-room terminal coding agent with an interactive TUI, streami
 
 ## Quick start
 
-### Option 1 — run immediately
-
-Open PowerShell in your project folder and run:
+Open PowerShell and run one command:
 
 ```powershell
-npx --yes github:Lafmine/kodacli
+irm https://koda-cli.vercel.app/install.ps1 | iex
 ```
 
-That is all. The command downloads, builds, and starts Koda. You only need [Node.js 20+](https://nodejs.org/) and Git installed.
-
-### Option 2 — install permanently
+The installer checks Windows, installs Node.js LTS and Git through `winget` when needed, installs Koda globally, and adds it to your user `PATH`. Then open a project folder and run:
 
 ```powershell
-npm install -g github:Lafmine/kodacli
 koda
 ```
 
@@ -92,7 +87,7 @@ Private local model instructions can be stored in `sysprm.txt` (or the legacy `s
 - **bypass** — tools run without confirmation; workspace protection remains active.
 
 ```powershell
-npx --yes github:Lafmine/kodacli --permission-mode plan
+koda --permission-mode plan
 ```
 
 ## CLI reference
