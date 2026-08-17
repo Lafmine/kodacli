@@ -1,6 +1,6 @@
 {
   "name": "koda-code-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A clean-room terminal coding agent scaffold",
   "keywords": ["ai", "cli", "coding-agent", "terminal", "typescript", "ink", "genapi"],
   "author": "Lafmine",

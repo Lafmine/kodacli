@@ -15,7 +15,7 @@ import {builtInTools} from './tools/index.js';
 import {App} from './ui/App.js';
 import {loadPrivateSystemPrompt} from './system-prompt.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 
 interface CliOptions {
   print?: boolean;

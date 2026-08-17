@@ -34,15 +34,17 @@ export async function loadConfig(workspace: string, overrides: Partial<KodaConfi
   const project = await readJson(path.join(workspace, '.koda.json'));
   const safeProject = configSchema.partial().pick({model: true, permissionMode: true, theme: true, shell: true, commandTimeoutMs: true}).safeParse(project);
   const userParsed = configSchema.partial().safeParse(user);
-  const genApiEnvironment = process.env.KODA_API_KEY ? {
-    provider: 'genapi',
-    model: process.env.KODA_MODEL ?? 'gpt-4o-mini',
-    baseUrl: process.env.KODA_BASE_URL ?? 'https://proxy.gen-api.ru/v1',
-  } : {};
+  const providerEnvironment = process.env.KODA_PROVIDER === 'demo'
+    ? {provider: 'demo', model: 'demo-v1', baseUrl: undefined}
+    : {
+        provider: 'genapi',
+        model: process.env.KODA_MODEL ?? 'gpt-4o-mini',
+        baseUrl: process.env.KODA_BASE_URL ?? 'https://proxy.gen-api.ru/v1',
+      };
   return configSchema.parse({
     ...(userParsed.success ? userParsed.data : {}),
     ...(safeProject.success ? safeProject.data : {}),
-    ...genApiEnvironment,
+    ...providerEnvironment,
     ...overrides,
   });
 }

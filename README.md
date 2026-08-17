@@ -27,21 +27,26 @@ Koda Code is a clean-room terminal coding agent with an interactive TUI, streami
  Enter send · Shift+Enter newline · / commands
 ```
 
-## Run in one command
+## Quick start
 
-No cloning, global installation, `npm link`, or PATH setup:
+### Option 1 — run immediately
+
+Open PowerShell in your project folder and run:
 
 ```powershell
 npx --yes github:Lafmine/kodacli
 ```
 
-That single command downloads, builds, and launches Koda. Node.js 20+ and Git are the only prerequisites.
+That is all. The command downloads, builds, and starts Koda. You only need [Node.js 20+](https://nodejs.org/) and Git installed.
 
-Pass an initial prompt just as easily:
+### Option 2 — install permanently
 
 ```powershell
-npx --yes github:Lafmine/kodacli "explain this project"
+npm install -g github:Lafmine/kodacli
+koda
 ```
+
+After installation, run `koda` from any project folder. No API setup or model selection is required.
 
 ## Highlights
 
@@ -72,20 +77,11 @@ Type `/` to open the searchable command palette.
 
 Use `↑`/`↓` to select, `Tab` to complete, `Enter` to run, and `Esc` to close the palette.
 
-## Connect GenAPI
+## API
 
-Koda launches immediately without a key using its local demo provider. To enable the real model, create `.env` in the project where you run Koda:
+The public test API configuration is already built in. Users do not need to create `.env`, paste a key, or select a model.
 
-```dotenv
-KODA_API_KEY=your-genapi-key
-```
-
-Run the same one-line command again. Koda automatically selects the configured GenAPI model. Optional overrides:
-
-```dotenv
-KODA_MODEL=your-model-id
-KODA_BASE_URL=https://proxy.gen-api.ru/v1
-```
+Developers can still override the bundled configuration with `KODA_API_KEY`, `KODA_MODEL`, and `KODA_BASE_URL`. Set `KODA_PROVIDER=demo` to use the offline provider during development.
 
 Private local model instructions can be stored in `sysprm.txt` (or the legacy `systempromt.txt`) in the active workspace. Koda loads the file as the system prompt at runtime; both filenames are ignored by Git and never included in the package.
 

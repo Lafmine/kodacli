@@ -5,12 +5,12 @@ import {describe, expect, it} from 'vitest';
 
 const execFileAsync = promisify(execFile);
 const cli = path.resolve('dist/cli.js');
-const demoEnvironment = {...process.env, KODA_API_KEY: ''};
+const demoEnvironment = {...process.env, KODA_API_KEY: '', KODA_PROVIDER: 'demo'};
 
 describe('CLI', () => {
   it('prints its version', async () => {
     const {stdout} = await execFileAsync(process.execPath, [cli, '--version'], {env: demoEnvironment});
-    expect(stdout.trim()).toBe('0.1.0');
+    expect(stdout.trim()).toBe('0.1.1');
   });
 
   it('runs demo provider in print mode', async () => {
