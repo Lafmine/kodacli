@@ -37,14 +37,18 @@ function Install-KodaDependency {
 
 Write-KodaStep 'Checking requirements...'
 
-if (-not (Get-Command node -ErrorAction SilentlyContinue) -or -not (Get-Command npm -ErrorAction SilentlyContinue)) {
+if (-not (Get-Command node.exe -ErrorAction SilentlyContinue) -or -not (Get-Command npm.cmd -ErrorAction SilentlyContinue)) {
     Install-KodaDependency -Id 'OpenJS.NodeJS.LTS' -Name 'Node.js LTS'
 }
 
-$kodaNodeMajor = [int]((& node --version).TrimStart('v').Split('.')[0])
+$kodaNodeCommand = (Get-Command node.exe -ErrorAction Stop).Source
+$kodaNpmCommand = (Get-Command npm.cmd -ErrorAction Stop).Source
+$kodaNodeMajor = [int]((& $kodaNodeCommand --version).TrimStart('v').Split('.')[0])
 if ($kodaNodeMajor -lt 20) {
     Install-KodaDependency -Id 'OpenJS.NodeJS.LTS' -Name 'Node.js LTS'
-    $kodaNodeMajor = [int]((& node --version).TrimStart('v').Split('.')[0])
+    $kodaNodeCommand = (Get-Command node.exe -ErrorAction Stop).Source
+    $kodaNpmCommand = (Get-Command npm.cmd -ErrorAction Stop).Source
+    $kodaNodeMajor = [int]((& $kodaNodeCommand --version).TrimStart('v').Split('.')[0])
     if ($kodaNodeMajor -lt 20) {
         throw 'Koda requires Node.js 20 or newer. Restart PowerShell and run the installer again.'
     }
@@ -68,23 +72,23 @@ try {
 
     Push-Location $kodaSourceRoot
     try {
-        & npm install --no-audit --no-fund
+        & $kodaNpmCommand install --no-audit --no-fund
         if ($LASTEXITCODE -ne 0) {
             throw "npm could not prepare Koda CLI (exit code $LASTEXITCODE)."
         }
 
-        & npm run build
+        & $kodaNpmCommand run build
         if ($LASTEXITCODE -ne 0) {
             throw "npm could not build Koda CLI (exit code $LASTEXITCODE)."
         }
 
-        $kodaPackageName = (& npm pack --ignore-scripts --silent).Trim().Split([Environment]::NewLine)[-1]
+        $kodaPackageName = (& $kodaNpmCommand pack --ignore-scripts --silent).Trim().Split([Environment]::NewLine)[-1]
         if ($LASTEXITCODE -ne 0 -or -not $kodaPackageName) {
             throw "npm could not package Koda CLI (exit code $LASTEXITCODE)."
         }
 
         $kodaPackagePath = Join-Path $kodaSourceRoot $kodaPackageName
-        & npm install --global $kodaPackagePath --ignore-scripts
+        & $kodaNpmCommand install --global $kodaPackagePath --ignore-scripts
         if ($LASTEXITCODE -ne 0) {
             throw "npm could not install Koda CLI (exit code $LASTEXITCODE)."
         }
@@ -99,7 +103,7 @@ try {
     }
 }
 
-$kodaNpmPrefix = (& npm prefix --global).Trim()
+$kodaNpmPrefix = (& $kodaNpmCommand prefix --global).Trim()
 if (-not $kodaNpmPrefix) {
     throw 'Could not determine the global npm directory.'
 }
@@ -115,16 +119,11 @@ if ($kodaNpmPrefix -notin @($env:Path -split ';')) {
     $env:Path = "$env:Path;$kodaNpmPrefix"
 }
 
-$kodaCommand = Get-Command koda -ErrorAction SilentlyContinue
-if (-not $kodaCommand) {
-    $kodaCommandPath = Join-Path $kodaNpmPrefix 'koda.cmd'
-    if (Test-Path -LiteralPath $kodaCommandPath) {
-        $kodaVersion = (& $kodaCommandPath --version).Trim()
-    } else {
-        throw 'Koda was installed, but its command could not be found. Restart PowerShell and run koda.'
-    }
+$kodaCommandPath = Join-Path $kodaNpmPrefix 'koda.cmd'
+if (Test-Path -LiteralPath $kodaCommandPath) {
+    $kodaVersion = (& $kodaCommandPath --version).Trim()
 } else {
-    $kodaVersion = (& koda --version).Trim()
+    throw 'Koda was installed, but its command could not be found. Restart PowerShell and run koda.'
 }
 
 Write-Host ''
