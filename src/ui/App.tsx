@@ -3,6 +3,7 @@ import {Box, Text, useApp, useInput} from 'ink';
 import type {KodaConfig} from '../config.js';
 import {withPermissionMode} from '../config.js';
 import {runAgent} from '../core/agent.js';
+import {compactMessages} from '../core/compact.js';
 import type {KodaTool, PermissionMode} from '../core/types.js';
 import type {ChatProvider} from '../core/types.js';
 import {appendMessage, createSession, type Session, SessionStore} from '../sessions.js';
@@ -42,6 +43,7 @@ export const slashCommands: SlashCommand[] = [
   {name: '/status', description: 'Show session, provider, workspace, and permissions'},
   {name: '/config', description: 'Show the active Koda configuration'},
   {name: '/permissions', description: 'Cycle default, plan, and bypass modes'},
+  {name: '/compact', description: 'Compress saved context for this session'},
   {name: '/resume', description: 'Resume the latest session in this workspace'},
   {name: '/new', description: 'Start a new empty session'},
   {name: '/exit', description: 'Exit Koda Code'},
@@ -75,6 +77,12 @@ function CommandPalette({commands, selectedIndex, color}: CommandPaletteProps) {
       <Text dimColor>↑↓ select  Enter run  Tab complete  Esc close</Text>
     </Box>
   );
+}
+
+function visibleTranscript(messages: Session['messages'], nextId: React.MutableRefObject<number>): TranscriptEntry[] {
+  return messages
+    .filter((message) => message.role !== 'tool')
+    .map((message) => ({id: nextId.current++, role: message.role, text: message.content}));
 }
 
 export function App(props: AppProps) {
@@ -121,6 +129,16 @@ export function App(props: AppProps) {
       const requested = modes.includes(argument as PermissionMode) ? argument as PermissionMode : modes[(modes.indexOf(config.permissionMode) + 1) % modes.length] ?? 'default';
       setConfig((current) => withPermissionMode(current, requested));
       addEntry('system', `Permission mode changed to ${requested}.`);
+    } else if (name === 'compact') {
+      const result = compactMessages(session.messages, {force: true});
+      if (!result.compacted) addEntry('system', 'Nothing to compact yet. Keep chatting and Koda will compact automatically when the context gets large.');
+      else {
+        const compactedSession = {...session, messages: result.messages};
+        const notice = `Context compacted: ${result.beforeMessages} → ${result.afterMessages} messages, about ${result.estimatedTokensBefore} → ${result.estimatedTokensAfter} tokens.`;
+        setSession(compactedSession);
+        setTranscript([...visibleTranscript(compactedSession.messages, nextId), {id: nextId.current++, role: 'system', text: notice}]);
+        await props.store.save(compactedSession);
+      }
     } else if (name === 'new') {
       const fresh = createSession(props.workspace, config.provider, config.model);
       setSession(fresh);
@@ -131,7 +149,7 @@ export function App(props: AppProps) {
       const latest = await props.store.latest(props.workspace);
       if (latest) {
         setSession(latest);
-        setTranscript(latest.messages.filter((message) => message.role !== 'tool').map((message) => ({id: nextId.current++, role: message.role, text: message.content})));
+        setTranscript(visibleTranscript(latest.messages, nextId));
         addEntry('system', `Resumed session ${latest.id}.`);
       } else addEntry('error', 'No saved session was found for this workspace.');
     } else if (name === 'exit') exit();
@@ -151,7 +169,12 @@ export function App(props: AppProps) {
     setBusy(true);
     const abortController = new AbortController();
     controller.current = abortController;
-    const nextSession = appendMessage(session, {role: 'user', content: prompt});
+    let nextSession = appendMessage(session, {role: 'user', content: prompt});
+    const compactResult = compactMessages(nextSession.messages);
+    if (compactResult.compacted) {
+      nextSession = {...nextSession, messages: compactResult.messages};
+      addEntry('system', `Context compacted automatically: ${compactResult.beforeMessages} → ${compactResult.afterMessages} messages.`);
+    }
     try {
       const events = runAgent({
         provider: props.provider,

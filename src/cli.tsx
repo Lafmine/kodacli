@@ -7,6 +7,7 @@ import {loadConfig} from './config.js';
 import type {KodaConfig} from './config.js';
 import {loadWorkspaceEnvironment} from './environment.js';
 import {runAgent} from './core/agent.js';
+import {compactMessages} from './core/compact.js';
 import type {PermissionMode} from './core/types.js';
 import {getGitBranch} from './git.js';
 import {createProvider} from './providers/index.js';
@@ -39,7 +40,12 @@ async function resolveSession(options: CliOptions, workspace: string, config: Ko
 
 async function runPrint(prompt: string, options: CliOptions, workspace: string, config: KodaConfig, systemPrompt?: string): Promise<void> {
   const store = new SessionStore();
-  const session = appendMessage(await resolveSession(options, workspace, config, store), {role: 'user', content: prompt});
+  let session = appendMessage(await resolveSession(options, workspace, config, store), {role: 'user', content: prompt});
+  const compactResult = compactMessages(session.messages);
+  if (compactResult.compacted) {
+    session = {...session, messages: compactResult.messages};
+    process.stderr.write(`[koda] Context compacted automatically: ${compactResult.beforeMessages} -> ${compactResult.afterMessages} messages.\n`);
+  }
   const provider = createProvider(config);
   const controller = new AbortController();
   const interrupt = () => controller.abort();
