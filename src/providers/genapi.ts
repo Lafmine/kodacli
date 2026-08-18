@@ -74,7 +74,7 @@ export class GenApiProvider implements ChatProvider {
         stream: true,
         stream_options: {include_usage: true},
         messages: [
-          {role: 'system', content: request.systemPrompt ?? 'You are Koda Code, a concise terminal coding agent. Inspect the workspace with tools before making claims. Use tools to read, create, and edit files when they help complete the user request.'},
+          {role: 'system', content: request.systemPrompt ?? 'You are Koda Code, a concise terminal coding agent. Inspect the workspace with tools before making claims. Use tools to read, create, edit, and open files when they help complete the user request. When the user asks to open a file, call the open_file tool instead of saying you cannot open files.'},
           ...request.messages.map(mapMessage),
         ],
         tools: request.tools.map((tool) => ({

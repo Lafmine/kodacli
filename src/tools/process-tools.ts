@@ -62,3 +62,19 @@ export const shellTool: KodaTool<{command: string}> = {
     return runProcess(shell, args, {cwd: context.workspace, timeoutMs: context.commandTimeoutMs, maxChars: context.maxOutputChars, signal});
   },
 };
+
+export const openFileTool: KodaTool<{path: string}> = {
+  name: 'open_file',
+  description: 'Open an existing workspace file or folder in the operating system default app.',
+  risk: 'shell',
+  inputSchema: z.object({path: z.string().min(1)}),
+  async execute(context, input, signal) {
+    const target = await resolveWorkspacePath(context.workspace, input.path);
+    const command = platform() === 'win32' ? 'powershell.exe' : platform() === 'darwin' ? 'open' : 'xdg-open';
+    const args = platform() === 'win32'
+      ? ['-NoLogo', '-NoProfile', '-NonInteractive', '-Command', 'Start-Process -LiteralPath $args[0]', target]
+      : [target];
+    const result = await runProcess(command, args, {cwd: context.workspace, timeoutMs: context.commandTimeoutMs, maxChars: context.maxOutputChars, signal});
+    return result.ok ? {ok: true, output: `Opened ${target}.`} : result;
+  },
+};

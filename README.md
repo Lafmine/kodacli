@@ -62,7 +62,7 @@ Remove-Item -LiteralPath "$env:APPDATA\Koda" -Recurse -Force
 | Feature | What it gives you |
 |---|---|
 | Interactive terminal | Streaming messages, command palette, history, multiline input, and `Thinking...` state |
-| Local coding tools | Read, list, search, write, edit, and run shell commands |
+| Local coding tools | Read, list, search, write, edit, open files, and run shell commands |
 | Permission modes | `default`, read-only `plan`, and trusted `bypass` workflows |
 | Workspace safety | Path traversal protection, command timeouts, and bounded output |
 | Persistent sessions | Continue work across terminal restarts |

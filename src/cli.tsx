@@ -13,7 +13,7 @@ import {createProvider} from './providers/index.js';
 import {appendMessage, createSession, SessionStore} from './sessions.js';
 import {builtInTools} from './tools/index.js';
 import {App} from './ui/App.js';
-import {loadPrivateSystemPrompt} from './system-prompt.js';
+import {buildSystemPrompt, loadPrivateSystemPrompt} from './system-prompt.js';
 
 const VERSION = '0.1.1';
 
@@ -95,7 +95,7 @@ async function main(): Promise<void> {
   if (!(await stat(workspace)).isDirectory()) throw new Error(`Not a directory: ${workspace}`);
   loadWorkspaceEnvironment(workspace);
   const config = await loadConfig(workspace, options.permissionMode ? {permissionMode: options.permissionMode} : {});
-  const systemPrompt = await loadPrivateSystemPrompt(workspace);
+  const systemPrompt = buildSystemPrompt(await loadPrivateSystemPrompt(workspace));
 
   if (options.print) {
     if (!prompt) throw new Error('--print requires a prompt.');
