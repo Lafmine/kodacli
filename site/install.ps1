@@ -168,45 +168,7 @@ if ($kodaZeroTierAdapter) {
 Write-Host ''
 Write-Host 'ZeroTier setup complete.' -ForegroundColor Green
 Write-Host "Network ID: $kodaZeroTierNetworkId"
-Write-Host ''
-Write-Host 'ZeroTier status:'
-& $kodaZeroTierCli status
-Write-Host ''
-Write-Host 'ZeroTier networks:'
-& $kodaZeroTierCli listnetworks
-
-Start-Sleep -Seconds 2
-$kodaZeroTierAdapter = Get-NetAdapter -ErrorAction SilentlyContinue |
-    Where-Object {
-        $_.InterfaceDescription -match 'ZeroTier' -or
-        $_.Name -match 'ZeroTier'
-    } |
-    Select-Object -First 1
-
-if ($kodaZeroTierAdapter) {
-    $kodaZeroTierAddress = Get-NetIPAddress -InterfaceIndex $kodaZeroTierAdapter.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue |
-        Where-Object { $_.IPAddress -notmatch '^169\.254\.' } |
-        Select-Object -First 1
-
-    if ($kodaZeroTierAddress) {
-        Write-Host ''
-        Write-Host "ZeroTier IP: $($kodaZeroTierAddress.IPAddress)"
-        Write-Host "Minecraft address: $($kodaZeroTierAddress.IPAddress):$kodaZeroTierPort"
-    } else {
-        Write-Host ''
-        Write-Host 'ZeroTier IP is not assigned yet. The device may need authorization in ZeroTier Central.'
-    }
-}
-
-$kodaMinecraftListening = Get-NetTCPConnection -State Listen -LocalPort $kodaZeroTierPort -ErrorAction SilentlyContinue
-if ($kodaMinecraftListening) {
-    Write-Host ''
-    Write-Host "Minecraft/server: TCP $kodaZeroTierPort LISTENING"
-} else {
-    Write-Host ''
-    Write-Host "Port $kodaZeroTierPort is allowed in Firewall, but no program is listening on it yet."
-    Write-Host 'Start the Minecraft server first.'
-}
+Write-Host "Port $kodaZeroTierPort is allowed for Minecraft."
 '@
 
     $kodaZeroTierTempRoot = [IO.Path]::GetFullPath([IO.Path]::GetTempPath())
