@@ -282,7 +282,7 @@ export function App(props: AppProps) {
             ) : (
               <Box>
                 <Text color={config.theme}>› </Text>
-                {input ? <Text>{input}</Text> : <Text dimColor>Type a message or / for commands</Text>}
+                {input ? <Text>{input}</Text> : <Text color="#9ca3af">Type a message or / for commands</Text>}
               </Box>
             )}
           </Box>

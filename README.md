@@ -43,6 +43,20 @@ koda
 
 After installation, run `koda` from any project folder. No API setup or model selection is required.
 
+## Uninstall
+
+To remove Koda from a user's computer, open PowerShell and run:
+
+```powershell
+npm.cmd uninstall --global koda-code-cli
+```
+
+To also delete local Koda config and saved sessions:
+
+```powershell
+Remove-Item -LiteralPath "$env:APPDATA\Koda" -Recurse -Force
+```
+
 ## Highlights
 
 | Feature | What it gives you |
