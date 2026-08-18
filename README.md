@@ -94,7 +94,7 @@ Use `↑`/`↓` to select, `Tab` to complete, `Enter` to run, and `Esc` to close
 
 ## API
 
-The public test API configuration is already built in. Users do not need to create `.env`, paste a key, or select a model.
+The public test API configuration is already built in. Users do not need to create `.env`, paste a key, or select a model. Koda uses the low-cost `gpt-4.1-nano` model by default.
 
 Developers can still override the bundled configuration with `KODA_API_KEY`, `KODA_MODEL`, and `KODA_BASE_URL`. Set `KODA_PROVIDER=demo` to use the offline provider during development.
 

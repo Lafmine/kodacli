@@ -38,7 +38,7 @@ export async function loadConfig(workspace: string, overrides: Partial<KodaConfi
     ? {provider: 'demo', model: 'demo-v1', baseUrl: undefined}
     : {
         provider: 'genapi',
-        model: process.env.KODA_MODEL ?? 'gpt-4o-mini',
+        model: process.env.KODA_MODEL ?? 'gpt-4.1-nano',
         baseUrl: process.env.KODA_BASE_URL ?? 'https://proxy.gen-api.ru/v1',
       };
   return configSchema.parse({

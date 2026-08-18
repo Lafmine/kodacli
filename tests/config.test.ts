@@ -23,7 +23,7 @@ describe('provider configuration', () => {
     process.env.KODA_API_KEY = 'test-key';
     delete process.env.KODA_PROVIDER;
     await expect(loadConfig(workspace)).resolves.toMatchObject({
-      provider: 'genapi', model: 'gpt-4o-mini', baseUrl: 'https://proxy.gen-api.ru/v1',
+      provider: 'genapi', model: 'gpt-4.1-nano', baseUrl: 'https://proxy.gen-api.ru/v1',
     });
   });
 

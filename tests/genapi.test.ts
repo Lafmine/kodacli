@@ -18,7 +18,7 @@ async function startServer(handler: RequestListener): Promise<string> {
 const request: ChatRequest = {
   messages: [{role: 'user', content: 'List files'}],
   workspace: 'C:/project',
-  model: 'gpt-4o-mini',
+  model: 'gpt-4.1-nano',
   tools: [{name: 'list_files', description: 'List files', inputSchema: {type: 'object', properties: {path: {type: 'string'}}}}],
 };
 
@@ -42,7 +42,7 @@ describe('GenApiProvider', () => {
     for await (const event of provider.stream(request, new AbortController().signal)) events.push(event);
 
     expect(receivedAuthorization).toBe('Bearer test-key');
-    expect(JSON.parse(receivedBody)).toMatchObject({model: 'gpt-4o-mini', stream: true, tool_choice: 'auto'});
+    expect(JSON.parse(receivedBody)).toMatchObject({model: 'gpt-4.1-nano', stream: true, tool_choice: 'auto'});
     expect(events.filter((event) => event.type === 'text').map((event) => event.type === 'text' ? event.text : '').join('')).toBe('Hello there');
     expect(events).toContainEqual({type: 'tool_call', id: 'call_1', name: 'list_files', input: {path: '.'}});
     expect(events).toContainEqual({type: 'usage', inputTokens: 4, outputTokens: 2});
