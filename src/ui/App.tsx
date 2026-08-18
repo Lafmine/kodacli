@@ -261,7 +261,7 @@ export function App(props: AppProps) {
       <Box borderStyle="round" borderColor={config.theme} paddingX={1} flexDirection="column">
         <Text bold color={config.theme}>Koda Code</Text>
         <Text dimColor>{props.workspace}{props.branch ? `  ·  ${props.branch}` : ''}</Text>
-        <Text>Koda  ·  <Text color={config.theme}>{config.permissionMode}</Text></Text>
+        <Text>Claude Opus 5  ·  <Text color={config.theme}>{config.permissionMode}</Text></Text>
       </Box>
       {transcript.map((entry) => (
         <Box key={entry.id} marginTop={1}>
