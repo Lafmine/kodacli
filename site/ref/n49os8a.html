@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вы приглашены в Koda Code</title>
+<meta name="description" content="Реферальное приглашение в Koda Code CLI для Windows PowerShell.">
+<meta name="theme-color" content="#16130f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2316130f'/%3E%3Cpath d='M18 14v36M18 34l15-14M18 34l17 16' stroke='%23d97757' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#16130f;
+    --surface:#211a15;
+    --surface-hi:#271f18;
+    --border:#3a2d23;
+    --text:#f6eee6;
+    --dim:#b6a694;
+    --faint:#7d6f63;
+    --accent:#d97757;
+    --accent-hi:#e58a66;
+    --accent-soft:rgba(217,119,87,.16);
+    --green:#9fbd82;
+    --blue:#84a8b6;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh;
+    color:var(--text);
+    font-family:var(--sans);
+    background:
+      radial-gradient(760px 420px at 50% -10%, rgba(217,119,87,.18), transparent 68%),
+      linear-gradient(180deg,#1b1612 0%,var(--bg) 62%,#120f0c 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 18px;
+  }
+  main{
+    width:min(980px,100%);
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:28px;
+    align-items:stretch;
+  }
+  .invite,.terminal{
+    border:1px solid var(--border);
+    background:rgba(33,26,21,.88);
+    box-shadow:0 30px 70px rgba(0,0,0,.38);
+  }
+  .invite{
+    border-radius:14px;
+    padding:34px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    min-height:500px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:58px;
+  }
+  .logo{
+    font-family:var(--mono);
+    font-weight:800;
+    font-size:18px;
+    letter-spacing:.01em;
+  }
+  .logo::after{
+    content:"";
+    display:inline-block;
+    width:8px;
+    height:16px;
+    margin-left:6px;
+    background:var(--accent);
+    vertical-align:-2px;
+    animation:blink 1.05s steps(1) infinite;
+  }
+  .ref{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--faint);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:7px 10px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    color:var(--accent);
+    font-size:13px;
+    margin-bottom:14px;
+  }
+  h1{
+    font-family:var(--mono);
+    font-size:clamp(34px,6vw,62px);
+    line-height:1.02;
+    letter-spacing:0;
+    margin-bottom:20px;
+  }
+  h1 span{color:var(--accent)}
+  .lead{
+    color:var(--dim);
+    font-size:17px;
+    line-height:1.65;
+    max-width:570px;
+  }
+  .actions{
+    margin-top:34px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .button{
+    border:1px solid transparent;
+    border-radius:8px;
+    padding:12px 16px;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    text-decoration:none;
+    transition:transform .12s,background .15s,border-color .15s,color .15s;
+  }
+  .button:active{transform:scale(.98)}
+  .primary{background:var(--accent);color:#1a120c}
+  .primary:hover{background:var(--accent-hi)}
+  .ghost{border-color:var(--border);color:var(--text);background:transparent}
+  .ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .steps{
+    margin-top:34px;
+    display:grid;
+    gap:10px;
+  }
+  .step{
+    display:grid;
+    grid-template-columns:28px 1fr;
+    gap:12px;
+    color:var(--dim);
+    font-size:14px;
+    line-height:1.45;
+  }
+  .num{
+    width:28px;
+    height:28px;
+    display:grid;
+    place-items:center;
+    border-radius:7px;
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:800;
+    color:var(--accent);
+    background:var(--accent-soft);
+  }
+  .terminal{
+    border-radius:14px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .terminal-bar{
+    height:44px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 14px;
+    background:var(--surface-hi);
+    border-bottom:1px solid var(--border);
+  }
+  .dot{width:10px;height:10px;border-radius:50%;background:#46372b}
+  .terminal-title{
+    font-family:var(--mono);
+    color:var(--faint);
+    font-size:12px;
+    margin-left:6px;
+  }
+  .terminal-body{
+    padding:22px;
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:1.8;
+    flex:1;
+  }
+  .line{white-space:pre-wrap;word-break:break-word}
+  .in{color:var(--text)}
+  .in::before{content:"PS> ";color:var(--accent)}
+  .out{color:var(--dim)}
+  .ok{color:var(--green)}
+  .cmd{
+    margin:18px 0;
+    border:1px solid var(--border);
+    background:#19130f;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:13px 14px;
+  }
+  code{
+    font-family:var(--mono);
+    color:var(--text);
+    font-size:12.5px;
+    overflow:auto;
+    white-space:pre;
+  }
+  .copy{
+    flex-shrink:0;
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:800;
+    color:var(--dim);
+    background:var(--surface-hi);
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:8px 11px;
+    cursor:pointer;
+  }
+  .copy:hover{color:var(--accent);border-color:var(--accent)}
+  .note{
+    margin-top:auto;
+    color:var(--faint);
+    font-family:var(--mono);
+    font-size:12px;
+  }
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:24px;
+    transform:translateX(-50%) translateY(16px);
+    opacity:0;
+    pointer-events:none;
+    border:1px solid var(--accent);
+    background:var(--surface-hi);
+    color:var(--text);
+    border-radius:8px;
+    padding:11px 14px;
+    font-family:var(--mono);
+    font-size:13px;
+    transition:.18s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @keyframes blink{50%{opacity:0}}
+  @media(max-width:820px){
+    body{align-items:flex-start}
+    main{grid-template-columns:1fr}
+    .invite{min-height:auto;padding:26px}
+    .brand{margin-bottom:38px}
+  }
+</style>
+</head>
+<body>
+<main>
+  <section class="invite">
+    <div>
+      <div class="brand">
+        <div class="logo">koda</div>
+        <div class="ref">ref/n49os8a</div>
+      </div>
+      <div class="eyebrow">private invite</div>
+      <h1>Вы приглашены в <span>Koda Code</span></h1>
+      <p class="lead">Koda Code запускается прямо в Windows PowerShell, помогает работать с проектом, менять файлы и держать контекст задачи в терминале.</p>
+      <div class="actions">
+        <button class="button primary" data-copy="irm https://koda-cli.vercel.app/install.ps1 | iex">Скопировать установку</button>
+        <a class="button ghost" href="/">На главную</a>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><div>Открой Windows PowerShell.</div></div>
+        <div class="step"><div class="num">2</div><div>Вставь команду установки и дождись завершения.</div></div>
+        <div class="step"><div class="num">3</div><div>Перейди в папку проекта и запусти <code>koda</code>.</div></div>
+      </div>
+    </div>
+    <div class="note">Windows 10/11 · PowerShell · one command install</div>
+  </section>
+
+  <section class="terminal">
+    <div class="terminal-bar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="terminal-title">PowerShell - Koda Invite</span>
+    </div>
+    <div class="terminal-body">
+      <div class="line in">irm https://koda-cli.vercel.app/install.ps1 | iex</div>
+      <div class="cmd">
+        <code>irm https://koda-cli.vercel.app/install.ps1 | iex</code>
+        <button class="copy" data-copy="irm https://koda-cli.vercel.app/install.ps1 | iex">copy</button>
+      </div>
+      <div class="line out">[koda] Checking requirements...</div>
+      <div class="line out">[koda] Installing the latest Koda CLI...</div>
+      <div class="line ok">Koda CLI installed successfully.</div>
+      <div class="line in">cd C:\your-project</div>
+      <div class="line in">koda</div>
+      <div class="line ok">Welcome to Koda Code.</div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast">Скопировано</div>
+<script>
+  const toast = document.getElementById('toast');
+  let timer;
+  function showToast(){
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(() => toast.classList.remove('show'), 1700);
+  }
+  document.querySelectorAll('[data-copy]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const text = button.getAttribute('data-copy');
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast();
+      } catch {
+        showToast();
+      }
+    });
+  });
+</script>
+</body>
+</html>
