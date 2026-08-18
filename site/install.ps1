@@ -119,11 +119,22 @@ if ($kodaNpmPrefix -notin @($env:Path -split ';')) {
     $env:Path = "$env:Path;$kodaNpmPrefix"
 }
 
+$kodaBlockedShimPath = Join-Path $kodaNpmPrefix 'koda.ps1'
+if (Test-Path -LiteralPath $kodaBlockedShimPath) {
+    Remove-Item -LiteralPath $kodaBlockedShimPath -Force
+}
+
 $kodaCommandPath = Join-Path $kodaNpmPrefix 'koda.cmd'
 if (Test-Path -LiteralPath $kodaCommandPath) {
     $kodaVersion = (& $kodaCommandPath --version).Trim()
 } else {
     throw 'Koda was installed, but its command could not be found. Restart PowerShell and run koda.'
+}
+
+$kodaWindowsPowerShell = (Get-Command powershell.exe -ErrorAction Stop).Source
+$kodaRestrictedVersion = (& $kodaWindowsPowerShell -NoProfile -ExecutionPolicy Restricted -Command 'koda --version').Trim()
+if ($LASTEXITCODE -ne 0 -or $kodaRestrictedVersion -ne $kodaVersion) {
+    throw 'Koda was installed, but the command failed its restricted PowerShell check.'
 }
 
 Write-Host ''
