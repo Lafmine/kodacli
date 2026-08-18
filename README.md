@@ -43,6 +43,12 @@ koda
 
 After installation, run `koda` from any project folder. No API setup or model selection is required.
 
+Koda checks for updates on startup at most once every 12 hours and installs the latest GitHub version automatically. To disable this for one terminal session:
+
+```powershell
+$env:KODA_AUTO_UPDATE="0"
+```
+
 ## Uninstall
 
 To remove Koda from a user's computer, open PowerShell and run:

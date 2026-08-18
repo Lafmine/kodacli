@@ -5,7 +5,7 @@ import {describe, expect, it} from 'vitest';
 
 const execFileAsync = promisify(execFile);
 const cli = path.resolve('dist/cli.js');
-const demoEnvironment = {...process.env, KODA_API_KEY: '', KODA_PROVIDER: 'demo'};
+const demoEnvironment = {...process.env, KODA_API_KEY: '', KODA_PROVIDER: 'demo', KODA_AUTO_UPDATE: '0'};
 
 describe('CLI', () => {
   it('prints its version', async () => {

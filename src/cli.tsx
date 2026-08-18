@@ -14,6 +14,7 @@ import {appendMessage, createSession, SessionStore} from './sessions.js';
 import {builtInTools} from './tools/index.js';
 import {App} from './ui/App.js';
 import {buildSystemPrompt, loadPrivateSystemPrompt} from './system-prompt.js';
+import {maybeAutoUpdate} from './updates.js';
 
 const VERSION = '0.1.1';
 
@@ -90,6 +91,7 @@ async function main(): Promise<void> {
     return;
   }
   const options = parsed.opts<CliOptions>();
+  await maybeAutoUpdate();
   const prompt = (parsed.args as string[]).join(' ').trim();
   const workspace = await realpath(options.cwd);
   if (!(await stat(workspace)).isDirectory()) throw new Error(`Not a directory: ${workspace}`);
