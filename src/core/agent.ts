@@ -25,6 +25,30 @@ function detectOpenFileRequest(messages: ChatMessage[]): {path: string} | undefi
   return requestedPath ? {path: requestedPath} : undefined;
 }
 
+function detectGeneratedFileRequest(messages: ChatMessage[], assistantText: string): {path: string; content: string} | undefined {
+  let last: ChatMessage | undefined;
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index]?.role === 'user') {
+      last = messages[index];
+      break;
+    }
+  }
+  if (!last) return undefined;
+
+  const userText = last.content.trim();
+  const wantsFile = /(?:создай|сделай|напиши|сгенерируй|запиши|create|make|write|build)/iu.test(userText) &&
+    /(?:сайт|страниц|html|файл|website|page|file)/iu.test(userText);
+  if (!wantsFile) return undefined;
+
+  const codeBlock = /```([a-z0-9_-]*)\r?\n([\s\S]*?)```/i.exec(assistantText);
+  if (!codeBlock?.[2]) return undefined;
+
+  const language = codeBlock[1]?.toLowerCase();
+  const explicitPath = /(?:в\s+файл|файл|file|as)\s+["'`«]?([a-z0-9_.\-/\\а-яё]+?\.[a-z0-9]+)["'`»]?/iu.exec(userText)?.[1];
+  const path = explicitPath ?? (language === 'html' || /(?:сайт|html|website|page)/iu.test(userText) ? 'index.html' : 'output.txt');
+  return {path, content: codeBlock[2].trim()};
+}
+
 async function* executeTool(options: AgentRunOptions, tool: KodaTool, input: unknown, toolCallId: string): AsyncIterable<AgentEvent> {
   let parsedInput: unknown;
   try {
@@ -106,6 +130,12 @@ export async function* runAgent(options: AgentRunOptions): AsyncIterable<AgentEv
       }
       if (assistantText) messages.push({role: 'assistant', content: assistantText});
       if (!requestedTool) {
+        const generatedFile = detectGeneratedFileRequest(messages, assistantText);
+        const writeFileTool = generatedFile ? toolMap.get('write_file') : undefined;
+        if (generatedFile && writeFileTool) {
+          messages.push({role: 'assistant', content: '', toolCalls: [{id: 'local_write_generated_file', name: writeFileTool.name, input: generatedFile}]});
+          yield* executeTool(options, writeFileTool, generatedFile, 'local_write_generated_file');
+        }
         yield {type: 'done'};
         return;
       }

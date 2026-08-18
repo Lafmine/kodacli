@@ -71,4 +71,31 @@ describe('agent loop', () => {
     expect(events).toContainEqual({type: 'tool_start', toolName: 'open_file'});
     expect(events.some((event) => event.type === 'tool_result' && event.result?.output === 'opened привет.txt')).toBe(true);
   });
+
+  it('writes generated HTML when the provider only returns a code block', async () => {
+    const workspace = await mkdtemp(path.join(tmpdir(), 'koda-agent-'));
+    cleanup.push(workspace);
+    const provider: ChatProvider = {
+      name: 'text-only',
+      async *stream() {
+        yield {type: 'text', text: 'Конечно:\n```html\n<h1>Shop</h1>\n```\n'};
+        yield {type: 'done'};
+      },
+    };
+
+    const events: AgentEvent[] = [];
+    for await (const event of runAgent({
+      provider,
+      messages: [{role: 'user', content: 'напиши сайт магазин одежды на html одна страница'}],
+      tools: builtInTools,
+      context: {workspace, commandTimeoutMs: 1000, maxOutputChars: 1000},
+      model: 'demo-v1',
+      permissionMode: 'bypass',
+      authorize: async () => true,
+      signal: new AbortController().signal,
+    })) events.push(event);
+
+    expect(await readFile(path.join(workspace, 'index.html'), 'utf8')).toBe('<h1>Shop</h1>');
+    expect(events.some((event) => event.type === 'tool_start' && event.toolName === 'write_file')).toBe(true);
+  });
 });

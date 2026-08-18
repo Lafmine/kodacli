@@ -73,6 +73,7 @@ export class GenApiProvider implements ChatProvider {
       body: JSON.stringify({
         model: request.model,
         stream: true,
+        max_tokens: 1536,
         stream_options: {include_usage: true},
         messages: [
           {role: 'system', content: request.systemPrompt ?? buildSystemPrompt()},
