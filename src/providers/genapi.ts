@@ -1,4 +1,5 @@
 import type {ChatMessage, ChatProvider, ChatRequest, ProviderEvent} from '../core/types.js';
+import {buildSystemPrompt} from '../system-prompt.js';
 
 interface GenApiProviderOptions {
   apiKey: string;
@@ -74,7 +75,7 @@ export class GenApiProvider implements ChatProvider {
         stream: true,
         stream_options: {include_usage: true},
         messages: [
-          {role: 'system', content: request.systemPrompt ?? 'You are Koda Code, a concise terminal coding agent. Inspect the workspace with tools before making claims. Use tools to read, create, edit, and open files when they help complete the user request. When the user asks to open a file, call the open_file tool instead of saying you cannot open files.'},
+          {role: 'system', content: request.systemPrompt ?? buildSystemPrompt()},
           ...request.messages.map(mapMessage),
         ],
         tools: request.tools.map((tool) => ({

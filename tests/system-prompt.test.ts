@@ -26,4 +26,11 @@ describe('private system prompt', () => {
     expect(prompt).toContain('open_file');
     expect(prompt).toContain('private test instruction');
   });
+
+  it('includes the baked behavior prompt by default', () => {
+    const prompt = buildSystemPrompt();
+    expect(prompt).toContain('CLAUDE OPUS 5');
+    expect(prompt).toContain('Chaos');
+    expect(prompt).toContain('open_file');
+  });
 });
