@@ -57,10 +57,6 @@ To also delete local Koda config and saved sessions:
 Remove-Item -LiteralPath "$env:APPDATA\Koda" -Recurse -Force
 ```
 
-## Antivirus warning
-
-Do not disable Windows Defender and do not add broad antivirus exclusions. Install Koda only from `https://koda-cli.vercel.app` or `https://github.com/Lafmine/kodacli`, update Microsoft Defender security intelligence, and submit a false-positive report to Microsoft if the installer is incorrectly flagged.
-
 ## Highlights
 
 | Feature | What it gives you |
